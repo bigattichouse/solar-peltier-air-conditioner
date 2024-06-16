@@ -2,7 +2,7 @@
 Creating a small solar powered Peltier airconditioner for small spaces.
 
 **Build process videos:**
-https://www.youtube.com/watch?v=YhfzhJzPWFo&list=PLND2CtdkloBIp-eudcDjFwSAG0tJLCzpY
+[https://www.youtube.com/watch?v=YhfzhJzPWFo&list=PLND2CtdkloBIp-eudcDjFwSAG0tJLCzpY](https://www.youtube.com/playlist?list=PLND2CtdkloBIp-eudcDjFwSAG0tJLCzpY)
 
 # Construction and Parts:
 
