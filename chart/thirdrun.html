@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DC.js Multi-Line Chart</title>
+    <!-- Load the required libraries -->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dc/4.2.3/dc.min.js"></script>
+    <link rel="stylesheet" href="css/dc.css" />
+    <style>
+        #chart {
+            width: 100%;
+            height: 500px;
+        }
+        
+         
+    </style>
+     <style>
+.dc-chart path.area {
+  fill-opacity: 0;
+  stroke: none; }
+
+    </style>
+</head>
+<body>
+First run,  4:14pm June 14,2024 to 9:00am June 16, 2024
+No A/C until 9:08am on June 15th.
+    <div id="chart"></div>
+    <script>
+    
+    var colorScale = d3.scaleOrdinal()
+    .domain(["Inside Temperature", "Inside Humidity", "Cold Side Temperature", "Cold Side Humidity", "Outside Temperature", "Outside Humidity", "Hot Side Temperature", "Hot Side Humidity"])
+    .range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f"]);
+
+
+
+        // Load and parse the CSV file
+        d3.text("../data/thirdrun.dat").then(function(text) {
+            var data = d3.csvParseRows(text, function(row) {
+                return {
+                    timestamp: new Date(
+                        +row[0].slice(0, 4), 
+                        +row[0].slice(4, 6) - 1, 
+                        +row[0].slice(6, 8), 
+                        +row[0].slice(9, 11), 
+                        +row[0].slice(11, 13), 
+                        +row[0].slice(13, 15)
+                    ),
+                    insideTemperature: +row[2],
+                    insideHumidity: +row[3],
+                    coldSideTemperature: +row[5],
+                    coldSideHumidity: +row[6],
+                    outsideTemperature: +row[8],
+                    outsideHumidity: +row[9],
+                    hotSideTemperature: +row[11],
+                    hotSideHumidity: +row[12]
+                };
+            });
+
+            // Create a Crossfilter instance
+            var ndx = crossfilter(data);
+
+            // Define the dimension and group
+            var timeDim = ndx.dimension(function(d) { return d.timestamp; });
+
+            var insideTemperatureGroup = timeDim.group().reduceSum(function(d) { return d.insideTemperature; });
+            var insideHumidityGroup = timeDim.group().reduceSum(function(d) { return d.insideHumidity; });
+            var coldSideTemperatureGroup = timeDim.group().reduceSum(function(d) { return d.coldSideTemperature; });
+            var coldSideHumidityGroup = timeDim.group().reduceSum(function(d) { return d.coldSideHumidity; });
+            var outsideTemperatureGroup = timeDim.group().reduceSum(function(d) { return d.outsideTemperature; });
+            var outsideHumidityGroup = timeDim.group().reduceSum(function(d) { return d.outsideHumidity; });
+            var hotSideTemperatureGroup = timeDim.group().reduceSum(function(d) { return d.hotSideTemperature; });
+            var hotSideHumidityGroup = timeDim.group().reduceSum(function(d) { return d.hotSideHumidity; });
+
+            // Create the composite chart
+            var chart = dc.compositeChart("#chart");
+
+            chart.width(1000)
+                .height(800)
+                .x(d3.scaleTime().domain([d3.min(data, function(d) { return d.timestamp; }), d3.max(data, function(d) { return d.timestamp; })]))
+                .dimension(timeDim)
+                .compose([
+                    dc.lineChart(chart)
+                        .group(insideTemperatureGroup, "Inside Temperature")
+                        .colors(colorScale("Inside Temperature"))
+                        .renderArea(function(d) { return false; })
+                        .renderDataPoints({ radius: 1 }),
+                    dc.lineChart(chart)
+                        .group(insideHumidityGroup, "Inside Humidity")
+                        .colors(colorScale("Inside Humidity"))
+                        .renderArea(function(d) { return false; })
+                        .renderDataPoints({ radius: 1 }),
+                    dc.lineChart(chart)
+                        .group(coldSideTemperatureGroup, "Cold Side Temperature")
+                        .colors(colorScale("Cold Side Temperature"))
+                        .renderArea(function(d) { return false; })
+                        .renderDataPoints({ radius: 1 }),
+                    dc.lineChart(chart)
+                        .group(coldSideHumidityGroup, "Cold Side Humidity")
+                        .colors(colorScale("Cold Side Humidity"))
+                        .renderArea(function(d) { return false; })
+                        .renderDataPoints({ radius: 1 }),
+                    dc.lineChart(chart)
+                        .group(outsideTemperatureGroup, "Outside Temperature")
+                        .colors(colorScale("Outside Temperature"))
+                        .renderArea(function(d) { return false; })
+                        .renderDataPoints({ radius: 1 }),
+                    dc.lineChart(chart)
+                        .group(outsideHumidityGroup, "Outside Humidity")
+                        .colors(colorScale("Outside Humidity"))
+                        .renderArea(function(d) { return false; })
+                        .renderDataPoints({ radius: 1 }),
+                    dc.lineChart(chart)
+                        .group(hotSideTemperatureGroup, "Hot Side Temperature")
+                        .colors(colorScale("Hot Side Temperature"))
+                        .renderArea(function(d) { return false; })
+                        .renderDataPoints({ radius: 1 }),
+                    dc.lineChart(chart)
+                        .group(hotSideHumidityGroup, "Hot Side Humidity")
+                        .colors(colorScale("Hot Side Humidity"))
+                        .renderArea(function(d) { return false; })
+                        .renderDataPoints({ radius: 3 })
+                ])  
+                .brushOn(false)
+                .render();
+
+            // Add legend
+            chart.legend(dc.legend().x(80).y(600).itemHeight(13).gap(5));
+
+            // Render the chart
+            dc.renderAll();
+        });
+    </script>
+</body>
+</html>
+
