@@ -24,6 +24,8 @@ https://bigattichouse.medium.com/diy-solar-powered-window-air-conditioner-part-5
 **Part 6:**
 https://bigattichouse.medium.com/diy-solar-powered-window-air-conditioner-part-6-reengineering-0a3d4d41032b
 
+**Part 7:**
+https://medium.com/@bigattichouse/diy-solar-powered-window-air-conditioner-part-7-opportunities-for-success-b640f3a7d8a3
 
 **Test Room:**
 
